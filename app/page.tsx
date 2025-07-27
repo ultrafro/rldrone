@@ -24,12 +24,21 @@ export const metadata: Metadata = {
       "Interactive 3D reinforcement learning environment for training autonomous drones with real-time visualization.",
     type: "website",
     siteName: "RL Drone",
+    images: [
+      {
+        url: "/icon.png",
+        width: 1200,
+        height: 630,
+        alt: "RL Drone - AI Training Simulation",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "RL Drone - AI Drone Training Simulation",
     description:
       "Interactive 3D reinforcement learning environment for training autonomous drones with real-time visualization.",
+    images: ["/icon.png"],
   },
   robots: {
     index: true,
