@@ -190,7 +190,7 @@ export default function DroneTrainerControlPanel({
         </div>
 
         {/* Mobile Bottom Controls */}
-        <div className="absolute bottom-4 left-4 right-4 space-y-2">
+        <div className="absolute bottom-12 left-4 right-4 space-y-2">
           {/* Speed Scale Slider - One Line */}
           <div className="bg-black bg-opacity-70 text-white p-2 rounded-lg backdrop-blur-md border border-gray-700">
             <div className="flex items-center gap-2">

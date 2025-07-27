@@ -120,7 +120,7 @@ function DronePage() {
         gl={{ alpha: true, antialias: true }}
         onCreated={({ gl }) => {
           gl.autoClear = true; // Change to true for proper transparency
-          gl.setClearColor(0x000000, 0);
+          gl.setClearColor(0xffffff, 1); // White background with full opacity
         }}
         className="w-full h-full absolute top-0 left-0 "
       >
