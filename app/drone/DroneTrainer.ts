@@ -1,29 +1,14 @@
-import { Mesh } from "three";
 import { DroneEnv } from "./DroneEnv";
-import { torch } from "js-pytorch";
-import {
-  getLogProbOfAction,
-  sampleFromProbs,
-  torch_abs,
-  torch_clamp,
-  torch_max,
-} from "./torchutils";
-import { getRLPolicy } from "../rl/RLPolicy";
+import { sampleFromProbs } from "./rl.utils";
 import {
   computeDiscountedReturns,
-  getEntropyOfPolicy,
-  getEntropyOfPolicyTF,
   getEntropyOfPolicyTFBatch,
-  getMeanAndStdOf2DArray,
 } from "./rl.utils";
-import { getValueNetwork } from "../rl/ValueNetwork";
 import { Gizmo } from "./useGizmos";
 import { DroneObstacle, DroneSettings } from "./Drone.model";
 import { RLPolicyTF } from "./RLPolicyTF";
 import { ValuePolicyTF } from "./ValuePolicyTF";
 import * as tf from "@tensorflow/tfjs";
-
-const device = "cpu";
 
 export class DroneTrainer {
   env: DroneEnv;
@@ -35,7 +20,6 @@ export class DroneTrainer {
   valuePolicyTF: ValuePolicyTF;
   optimizerTF: tf.Optimizer;
 
-  useTensorFlow: boolean = true;
   usTFGPUTraining: boolean = true;
 
   droneSize: number;
@@ -90,13 +74,7 @@ export class DroneTrainer {
   sequential_batching: boolean = false;
   backup_logprobs: boolean = true;
 
-  debug_episode_state_list: number[][] = [];
-  debug_episode_action_indices_list: number[] = [];
-  debug_episode_rewards_list: number[] = [];
-  debug_episode_returns_list: number[] = [];
-
   episode_state: number[][] = [];
-  //episode_action_log_probs: any[] = [];
   episode_action_indices: number[] = [];
   episode_rewards: number[] = [];
   episode_action_probabilities: number[][] = [];
@@ -104,15 +82,12 @@ export class DroneTrainer {
   episode_returns: number[] = [];
   episode_step_counter: number = 0;
 
-  // all_episodes_state_tensor: any[] = [];
   all_episodes_state: number[][] = [];
-  // all_episodes_action_log_probs: any[] = [];
   all_episodes_action_indices: number[] = [];
   all_episodes_rewards: number[] = [];
   all_episodes_action_probabilities: number[][] = [];
   all_episodes_returns: number[] = [];
   all_episodes_count: number = 0;
-  //done_indices: number[] = [];
   all_episodes_step_counter: number = 0;
 
   episode_action_log_probs: any[] = [];
@@ -165,7 +140,7 @@ export class DroneTrainer {
     this.value_coefficient = settings.valueCoefficient;
     this.entropy_coefficient = settings.entropyCoefficient;
 
-    (window as any).document.addEventListener("keydown", (e: KeyboardEvent) => {
+    (window as any).document.addEventListener("keyup", (e: KeyboardEvent) => {
       if (e.key === "f") {
         this.forceDone = true;
       }
@@ -305,24 +280,6 @@ export class DroneTrainer {
       this.all_episodes_rewards.push(0);
       this.all_episodes_returns.push(0);
     }
-
-    // episode_state: number[][] = [];
-    // //episode_action_log_probs: any[] = [];
-    // episode_action_indices: number[] = [];
-    // episode_rewards: number[] = [];
-    // episode_count: number = 0;
-    // episode_returns: number[] = [];
-    // episode_step_counter: number = 0;
-
-    // // all_episodes_state_tensor: any[] = [];
-    // all_episodes_state: number[][] = [];
-    // // all_episodes_action_log_probs: any[] = [];
-    // all_episodes_action_indices: number[] = [];
-    // all_episodes_rewards: number[] = [];
-    // all_episodes_returns: number[] = [];
-    // all_episodes_count: number = 0;
-    // done_indices: number[] = [];
-    // all_episodes_step_counter: number = 0;
   }
 
   last_update_time: number | null = null;
@@ -354,17 +311,10 @@ export class DroneTrainer {
 
     const num_steps = Math.floor(this.speed_up);
 
-    // const num_steps = Math.floor(delta_time / step_size )* this.speed_up;
-    const tic = performance.now();
-    // console.log("********* new update! *********")
-
     for (let i = 0; i < num_steps; i++) {
       const updateTic = performance.now();
       this.updateInternal(step_size);
-      //console.log('update time: ', num_steps, (performance.now() - updateTic).toFixed(3));
     }
-
-    // console.log('total update time: ', (performance.now() - tic).toFixed(3));
   }
 
   explosion_start_time: number = 0;
@@ -402,23 +352,12 @@ export class DroneTrainer {
       color,
     } = this.env.step(action, delta_time, position_scale);
 
-    // if(this.backup_logprobs){
-    //     this.episode_action_log_probs.push(actionLogProb);
-    // }
-
-    this.debug_episode_state_list.push([...this.current_state]);
-    this.debug_episode_action_indices_list.push(actionIndex);
-    this.debug_episode_rewards_list.push(reward);
-
-    //this.episode_state_tensor.push(this.t.tensor([this.current_state], true, device));
-    //this.episode_action_log_probs.push(actionLogProb);
     this.episode_state[this.episode_step_counter] = [...this.current_state];
     this.episode_action_indices[this.episode_step_counter] = actionIndex;
     this.episode_rewards[this.episode_step_counter] = reward;
     this.episode_action_probabilities[this.episode_step_counter] =
       actionProbabilitiesArray;
     this.episode_step_counter++;
-    //todo: collect values
 
     if (this.show_reward_updates) {
       this.setRewardGraphUpdate({
@@ -448,10 +387,6 @@ export class DroneTrainer {
       if (this.show_reward_updates) {
         //this.setRewardGraphUpdate(null);
       }
-
-      // setTimeout(()=>{
-      //     this.completeEpisode();
-      // }, 500);
 
       if (this.gizmos) {
         if (!this.gizmos.explosion) {
@@ -506,11 +441,6 @@ export class DroneTrainer {
       this.gamma
     );
 
-    this.debug_episode_returns_list = computeDiscountedReturns(
-      this.debug_episode_rewards_list,
-      this.gamma
-    );
-
     //copy into episode returns
     for (let i = 0; i < new_episode_returns.length; i++) {
       this.episode_returns[i] = new_episode_returns[i];
@@ -543,21 +473,6 @@ export class DroneTrainer {
 
     this.clear_dummy_episode_so_arrays_dont_change_size();
 
-    // this.all_episodes_state[this.episode_count] = [...this.episode_state];
-
-    // this.all_episodes_state.push(...this.episode_state);
-    // //this.all_episodes_action_log_probs.push(...this.episode_action_log_probs);
-    // this.all_episodes_action_indices.push(...this.episode_action_indices);
-    // this.all_episodes_rewards.push(...this.episode_rewards);
-    // this.all_episodes_returns.push(...this.episode_returns);
-    // //this.done_indices.push(episode_length-1);
-
-    // this.episode_state = [];
-    // //this.episode_action_log_probs = [];
-    // this.episode_action_indices = [];
-    // this.episode_rewards = [];
-    // this.episode_returns = [];
-
     this.episode_step_counter = 0;
 
     this.episode_count++;
@@ -565,40 +480,20 @@ export class DroneTrainer {
     if (this.episode_count % this.episodes_per_update == 0) {
       this.setUpdatingDisplay(true);
       await new Promise((resolve) => setTimeout(resolve, 100));
-      if (this.useTensorFlow) {
-        if (this.usTFGPUTraining) {
-          const switchToGPUtic = performance.now();
-          await this.switchToGPU();
-          // console.log('switchToGPU time: ', performance.now() - switchToGPUtic);
-        }
-
-        const tic = performance.now();
-        await this.updatePolicyTF();
-        // console.log('updatePolicyTF time: ', performance.now() - tic);
-
-        if (this.usTFGPUTraining) {
-          const switchToCPUTic = performance.now();
-          await this.switchToCPU();
-          // console.log('switchToCPU time: ', performance.now() - switchToCPUTic);
-        }
-      } else {
+      if (this.usTFGPUTraining) {
+        await this.switchToGPU();
       }
-      // this.updatePolicy();
-      //this.debugUpdatePolicy();
+
+      const tic = performance.now();
+      await this.updatePolicyTF();
+
+      if (this.usTFGPUTraining) {
+        const switchToCPUTic = performance.now();
+        await this.switchToCPU();
+      }
 
       this.all_episodes_step_counter = 0;
       this.clear_dummy_update_data_so_arrays_dont_change_size();
-
-      this.debug_episode_state_list = [];
-      this.debug_episode_action_indices_list = [];
-      this.debug_episode_rewards_list = [];
-
-      // this.all_episodes_state = [];
-      // //this.all_episodes_action_log_probs = [];
-      // this.all_episodes_action_indices = [];
-      // this.all_episodes_rewards = [];
-      // this.all_episodes_returns = [];
-      // //this.done_indices = [];
 
       this.setUpdatingDisplay(false);
     }
@@ -717,7 +612,6 @@ export class DroneTrainer {
             critic_estimated_return_batch.squeeze()
           );
           value_loss_batch = tf.sum(tf.pow(advantage_batch, 2)).squeeze();
-          //value_loss = value_loss.add(value_loss_batch);
 
           if (this.algorithm == "A2C") {
             //get the log probabilities
@@ -731,7 +625,6 @@ export class DroneTrainer {
                 .sum(tf.mul(log_prob_batch, frozen_advantage_batch).mul(-1))
                 .squeeze()
             );
-            //policy_loss = policy_loss.add(policy_loss_batch);
           }
 
           if (this.algorithm == "REINFORCE") {
@@ -743,7 +636,6 @@ export class DroneTrainer {
                 )
                 .squeeze()
             );
-            //policy_loss = policy_loss.add(policy_loss_batch);
           }
 
           if (this.algorithm == "PPO") {
@@ -882,24 +774,10 @@ export class DroneTrainer {
 
   // reusable_state_tensor: any = null;
   getNextAction(state: number[]) {
-    // if(this.reusable_state_tensor == null){
-    //     this.reusable_state_tensor = this.t.tensor([state], true, device);
-    // }
-    // const stateTensor = this.reusable_state_tensor;
-
     let actionProbabilitiesArray: number[] = [];
-    if (this.useTensorFlow) {
-      actionProbabilitiesArray = this.policyTF.forwardForInference(state);
-
-      //actionProbabilitiesArray = await  this.policyTF.forwardForInference(state);
-    } else {
-    }
+    actionProbabilitiesArray = this.policyTF.forwardForInference(state);
 
     const actionIndex = sampleFromProbs(actionProbabilitiesArray);
-
-    // const chosenActionProbabilityTensor = actionProbabilitiesTensor.at(index0Tensor, actionIndexTensor);
-
-    // const actionLogProbTensor = this.t.log(torch_max(this.t, chosenActionProbabilityTensor, this.t.tensor([1e-10], false, device)));
 
     let x = 0;
     let y = 0;
@@ -942,10 +820,6 @@ export class DroneTrainer {
         z = -1;
         break;
     }
-
-    // x = 0;
-    // y = 0;
-    // z = 0;
 
     return { action: [x, y, z], actionIndex, actionProbabilitiesArray };
   }
