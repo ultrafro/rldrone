@@ -255,7 +255,7 @@ export default function DroneTrainerControlPanel({
                 // : "bg-blue-600 hover:bg-blue-700 border-blue-500 text-white"
               }`}
             >
-              {"Train from scratch2"}
+              {"Train from scratch"}
             </button>
           )}
         </div>
@@ -347,7 +347,7 @@ export default function DroneTrainerControlPanel({
               }}
               className="w-full px-6 py-4 rounded-lg text-lg font-bold transition-colors border-2 bg-green-600 hover:bg-green-700 border-green-500 text-white"
             >
-              Start Training
+              Train From Scratch
             </button>
           ) : (
             <div className="w-full px-6 py-4 text-lg font-bold text-green-400 text-center">

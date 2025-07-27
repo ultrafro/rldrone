@@ -428,6 +428,9 @@ function DronePage() {
         droneSettings={droneSettings}
         setDroneSettings={setDroneSettings}
         beginTraining={() => {
+          //clear charts
+          setRewardGraph(null);
+          setDisplayData([]);
           setTrainingHappening(true);
         }}
         trainingHappening={trainingHappening}
