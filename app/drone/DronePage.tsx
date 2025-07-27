@@ -1,3 +1,5 @@
+"use client";
+
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, RenderCallback } from "@react-three/fiber";
 import dynamic from "next/dynamic";
