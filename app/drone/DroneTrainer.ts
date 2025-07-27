@@ -21,6 +21,7 @@ export class DroneTrainer {
   optimizerTF: tf.Optimizer;
 
   usTFGPUTraining: boolean = true;
+  useInitialModelWeightsIfAvailable: boolean = false;
 
   droneSize: number;
   setObstacles: (obstacles: DroneObstacle[]) => void = () => {};
@@ -153,12 +154,12 @@ export class DroneTrainer {
       this.num_states,
       this.num_actions,
       settings.actorNetworkSize,
-      initialPolicyWeights
+      this.useInitialModelWeightsIfAvailable ? initialPolicyWeights : null
     );
     this.valuePolicyTF = new ValuePolicyTF(
       this.num_states,
       settings.valueNetworkSize,
-      initialValueWeights
+      this.useInitialModelWeightsIfAvailable ? initialValueWeights : null
     );
 
     //add a window listener for the "k" key
