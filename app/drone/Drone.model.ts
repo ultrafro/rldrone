@@ -36,18 +36,18 @@ export type DroneSettings = {
 
 export const DefaultSettings: DroneSettings = {
   algorithm: "A2C",
-  actorNetworkSize: 256,
+  actorNetworkSize: 400,
   valueNetworkSize: 128,
   episodesPerUpdate: 1, //5
-  batchSize: 2048, //2048
+  batchSize: 1024, //2048
   numBatchesPerUpdate: 2,
   learningRate: 5e-4,
-  rewardDiscountGamma: 0.8,
+  rewardDiscountGamma: 0.7,
   skipHighlights: false,
   numberOfBlocks: 60,
   policyCoefficient: 1,
   valueCoefficient: 1,
-  entropyCoefficient: 0.01,
+  entropyCoefficient: 0.005,
   maxSensorDistance: 2,
   goalThresholdDistance: 1,
   goalReward: 10, //10,

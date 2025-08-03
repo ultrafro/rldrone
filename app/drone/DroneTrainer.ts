@@ -289,7 +289,7 @@ export class DroneTrainer {
   current_state: number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   currently_updating: boolean = false;
-  update(ts: number) {
+  update(ts: number, force?: boolean) {
     const now = Date.now();
     const step_size = 1 / 60;
 
@@ -299,7 +299,7 @@ export class DroneTrainer {
 
     let delta_time = (now - this.last_update_time) / 1000;
 
-    if (delta_time > step_size) {
+    if (delta_time > step_size || force) {
       this.last_update_time = now;
     } else {
       return;
