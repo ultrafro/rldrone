@@ -15,6 +15,7 @@ import { useIsMobile } from "@/app/page.utils";
 import { useDroneDisplay } from "./hooks/useDroneDisplay";
 import { useGraphs } from "./hooks/useGraphs";
 import EnvironmentDisplay from "./Display3D/EnvironmentDisplay";
+import { IntroModal } from "./Components/IntroModal";
 
 function DronePage() {
   const droneSize = 1;
@@ -28,6 +29,7 @@ function DronePage() {
   const [stepsPerUpdate, setStepsPerUpdate] = useState(30);
   const [scene, setScene] = useState<Scene | null>(null);
   const [updatingDisplay, setUpdatingDisplay] = useState(false);
+  const [showIntroModal, setShowIntroModal] = useState(true);
 
   const {
     obstacles,
@@ -108,6 +110,12 @@ function DronePage() {
 
   return (
     <div className="h-screen w-screen relative">
+      {/* Intro Modal */}
+      <IntroModal
+        isOpen={showIntroModal}
+        onClose={() => setShowIntroModal(false)}
+      />
+
       {/* Updating weights overlay */}
       {updatingDisplay && <UpdatingWeightsOverlay />}
 

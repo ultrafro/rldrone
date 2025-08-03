@@ -338,7 +338,11 @@ export default function DroneTrainerControlPanel({
       <div className="absolute right-4 bottom-4 w-[300px] flex flex-col-reverse gap-4">
         {/* Start Training Button */}
         <div className="bg-black bg-opacity-70 text-white p-4 rounded-lg backdrop-blur-md border border-gray-700">
-          <h3 className="font-bold text-lg mb-3">Training</h3>
+          <h3 className="font-bold text-lg mb-3">
+            {!trainingHappening
+              ? "Drone is running on pretrained weights"
+              : "Training Active"}
+          </h3>
           {!trainingHappening ? (
             <button
               onClick={() => {
