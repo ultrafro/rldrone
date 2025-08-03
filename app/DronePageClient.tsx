@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 
 // Dynamic import with loading state
-const DronePage = dynamic(() => import("./drone/DronePage"), {
+const DronePage = dynamic(() => import("./drone/Components/DronePage"), {
   loading: () => (
     <div className="h-screen w-screen flex items-center justify-center bg-black">
       <div className="text-white text-xl">

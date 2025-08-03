@@ -1,21 +1,21 @@
 "use client";
 
+import { useIsMobile } from "@/app/page.utils";
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, RenderCallback } from "@react-three/fiber";
 import { useCallback, useEffect, useState } from "react";
 import { Scene } from "three";
-import { DefaultSettings, DroneSettings } from "./Drone.model";
+import { DroneDisplay } from "../Display3D/DroneDisplay";
+import EnvironmentDisplay from "../Display3D/EnvironmentDisplay";
+import { DroneSettings, DefaultSettings } from "../Drone.model";
+import { useDroneDisplay } from "../hooks/useDroneDisplay";
+import { useGraphs } from "../hooks/useGraphs";
+import { useDroneTrainer } from "../RL/useDroneTrainer";
+import { Looper, SceneSetter } from "../utils/FiberUtils";
+import useGizmos from "../utils/useGizmos";
 import DroneTrainerControlPanel from "./DroneTrainerControlPanel";
-import { Looper, SceneSetter } from "./FiberUtils";
+import { IntroModal } from "./IntroModal";
 import { UpdatingWeightsOverlay } from "./UpdatingWeightsOverlay";
-import { useDroneTrainer } from "./useDroneTrainer";
-import useGizmos from "./useGizmos";
-import { DroneDisplay } from "./Display3D/DroneDisplay";
-import { useIsMobile } from "@/app/page.utils";
-import { useDroneDisplay } from "./hooks/useDroneDisplay";
-import { useGraphs } from "./hooks/useGraphs";
-import EnvironmentDisplay from "./Display3D/EnvironmentDisplay";
-import { IntroModal } from "./Components/IntroModal";
 
 function DronePage() {
   const droneSize = 1;

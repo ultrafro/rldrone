@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { DroneTrainer } from "./DroneTrainer";
 import { Group, Mesh } from "three";
-import { Gizmo } from "./useGizmos";
-import { DroneObstacle, DroneSettings } from "./Drone.model";
+
 import * as tf from "@tensorflow/tfjs";
+import { DroneObstacle, DroneSettings } from "../Drone.model";
+import { Gizmo } from "../utils/useGizmos";
 
 export function useDroneTrainer(
   droneGroup: React.RefObject<Group>,
@@ -64,7 +65,9 @@ export function useDroneTrainer(
 
       try {
         // Load policy weights
-        const policyResponse = await fetch(`${domain}/drone/rl-policy-weights.json`);
+        const policyResponse = await fetch(
+          `${domain}/drone/rl-policy-weights.json`
+        );
         let policyWeights = null;
         if (policyResponse.ok) {
           const policyData = await policyResponse.json();
@@ -76,7 +79,9 @@ export function useDroneTrainer(
         }
 
         // Load value weights
-        const valueResponse = await fetch(`${domain}/drone/value-policy-weights.json`);
+        const valueResponse = await fetch(
+          `${domain}/drone/value-policy-weights.json`
+        );
         let valueWeights = null;
         if (valueResponse.ok) {
           const valueData = await valueResponse.json();
@@ -119,8 +124,8 @@ export function useDroneTrainer(
       setDroneSensorValues,
       onRewardGraphUpdate,
       setUpdatingDisplay,
-      trainingHappening ? null : initialWeights?.policyWeights ?? null,
-      trainingHappening ? null : initialWeights?.valueWeights ?? null
+      trainingHappening ? null : (initialWeights?.policyWeights ?? null),
+      trainingHappening ? null : (initialWeights?.valueWeights ?? null)
     );
     setDroneTrainer(newDroneTrainer);
 

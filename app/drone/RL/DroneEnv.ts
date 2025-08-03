@@ -1,4 +1,4 @@
-import { directions, DroneObstacle, DroneSettings } from "./Drone.model";
+import { directions, DroneObstacle, DroneSettings } from "../Drone.model";
 import { Vector3 } from "three";
 
 export class DroneEnv {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { type DroneSettings } from "./Drone.model";
+import { type DroneSettings } from "../Drone.model";
 import { TooltipOverlay } from "./TooltipOverlay";
 
 export default function DroneSettings({

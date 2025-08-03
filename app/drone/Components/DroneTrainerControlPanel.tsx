@@ -1,9 +1,10 @@
-import { DroneSettings as DroneSettingsType } from "./Drone.model";
+import { DroneSettings as DroneSettingsType } from "../Drone.model";
 import DroneSettings from "./DroneSettings";
 import SimpleBarChart from "./SimpleBarChart";
 import SimpleChart from "./SimpleChart";
-import { TooltipOverlay } from "./TooltipOverlay";
+
 import { useState, useEffect } from "react";
+import { TooltipOverlay } from "./TooltipOverlay";
 
 export default function DroneTrainerControlPanel({
   stepsPerUpdate,

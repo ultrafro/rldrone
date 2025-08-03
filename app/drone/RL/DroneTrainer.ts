@@ -1,11 +1,11 @@
-import { DroneEnv } from "./DroneEnv";
-import { sampleFromProbs } from "./rl.utils";
+import { DroneObstacle, DroneSettings } from "../Drone.model";
 import {
   computeDiscountedReturns,
   getEntropyOfPolicyTFBatch,
-} from "./rl.utils";
-import { Gizmo } from "./useGizmos";
-import { DroneObstacle, DroneSettings } from "./Drone.model";
+  sampleFromProbs,
+} from "../utils/rl.utils";
+import { Gizmo } from "../utils/useGizmos";
+import { DroneEnv } from "./DroneEnv";
 import { RLPolicyTF } from "./RLPolicyTF";
 import { ValuePolicyTF } from "./ValuePolicyTF";
 import * as tf from "@tensorflow/tfjs";

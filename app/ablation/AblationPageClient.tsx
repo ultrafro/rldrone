@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { DefaultSettings, DroneSettings } from "../drone/Drone.model";
-import { DroneTrainer } from "../drone/DroneTrainer";
+import { DroneTrainer } from "../drone/RL/DroneTrainer";
 
 // Parameters to test in ablation study
 const ABLATION_PARAMETERS = [
