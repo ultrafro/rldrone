@@ -4,6 +4,19 @@ A browser-based demonstration of reinforcement learning algorithms training a vi
 
 ![Drone RL Training Demo](https://img.shields.io/badge/Demo-Live%20Training-green) ![TensorFlow.js](https://img.shields.io/badge/TensorFlow.js-3.7.0-orange) ![Next.js](https://img.shields.io/badge/Next.js-15.4.4-black)
 
+demo: https://rldrone.vercel.app/
+
+
+
+
+https://github.com/user-attachments/assets/d03b61af-d064-4add-903f-1ec8f4c7bd77
+
+
+
+
+
+
+
 ## 🎯 Overview
 
 This project showcases major reinforcement learning algorithms applied to autonomous drone navigation. A virtual drone equipped with 6 directional sensors learns to:
@@ -13,7 +26,13 @@ This project showcases major reinforcement learning algorithms applied to autono
 - **Optimize flight paths** through reinforcement learning
 - **Adapt behavior** based on reward feedback
 
+https://github.com/user-attachments/assets/0b4071f2-a8f2-4c98-a9e8-b17c34163e20
+
+
+
 The entire training pipeline runs in real-time in your browser, making RL concepts accessible and visualizable without requiring specialized hardware or cloud computing.
+
+https://github.com/user-attachments/assets/48ff35af-97de-4a5e-b325-f24ff4645098
 
 ## 🤖 Reinforcement Learning Algorithms
 
@@ -32,6 +51,9 @@ The entire training pipeline runs in real-time in your browser, making RL concep
    - State-of-the-art policy gradient method
    - Prevents destructive policy updates with clipped objectives
    - More stable training than vanilla policy gradients
+
+https://github.com/user-attachments/assets/98de4653-e58f-4c72-a779-7c9c2c4fad44
+
 
 ### Neural Network Architecture
 
@@ -171,6 +193,8 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 - **Batch Sizes**: 512 to 4096 samples
 - **Discount Factor**: 0.9 to 0.99
 - **Episode Length**: 1000 to 10000 steps
+
+<img width="365" height="653" alt="Screenshot 2025-08-02 181158" src="https://github.com/user-attachments/assets/f29f4d7c-e227-4684-9ee0-209b4327948e" />
 
 ## 🎯 Educational Value
 
