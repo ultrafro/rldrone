@@ -182,6 +182,137 @@ This project demonstrates:
 - **Neural Network Training**: Real-time visualization of gradient descent
 - **Sensor Fusion**: Combining multiple sensor inputs for decision making
 
+## 🗺️ Code Map & Architecture
+
+### Project Structure
+
+```
+app/
+├── page.tsx                    # Landing page with project overview
+├── layout.tsx                  # Root layout and global styles
+├── page.utils.tsx             # Shared utilities (mobile detection, etc.)
+├── DronePageClient.tsx        # Main drone training page client component
+├── globals.css               # Global CSS styles
+│
+├── drone/                    # Core drone RL implementation
+│   ├── Drone.model.ts        # TypeScript interfaces and default settings
+│   │
+│   ├── RL/                   # Reinforcement Learning algorithms
+│   │   ├── DroneEnv.ts       # Environment simulation (state, actions, rewards)
+│   │   ├── DroneTrainer.ts   # Main training loop and episode management
+│   │   ├── RLPolicyTF.ts     # Policy network (actor) implementation
+│   │   ├── ValuePolicyTF.ts  # Value network (critic) implementation
+│   │   └── useDroneTrainer.ts # React hook for trainer lifecycle
+│   │
+│   ├── Components/           # React UI components
+│   │   ├── DronePage.tsx     # Main 3D training interface
+│   │   ├── DroneTrainerControlPanel.tsx # Training controls and settings
+│   │   ├── DroneSettings.tsx # Hyperparameter configuration
+│   │   ├── IntroModal.tsx    # Welcome tutorial modal
+│   │   ├── SimpleChart.tsx   # Real-time loss/reward charts
+│   │   ├── SimpleBarChart.tsx # Bar chart component
+│   │   ├── TooltipOverlay.tsx # Interactive help tooltips
+│   │   └── UpdatingWeightsOverlay.tsx # Training status indicator
+│   │
+│   ├── Display3D/           # 3D visualization components
+│   │   ├── DroneDisplay.tsx  # 3D drone and sensor rendering
+│   │   ├── EnvironmentDisplay.tsx # 3D obstacles and environment
+│   │   └── EdgesOnlyBox.tsx  # Wireframe box component
+│   │
+│   ├── hooks/               # Custom React hooks
+│   │   ├── useDroneDisplay.tsx # 3D scene management
+│   │   └── useGraphs.ts     # Chart data and sensor visualization
+│   │
+│   ├── utils/               # Utility functions
+│   │   ├── FiberUtils.tsx   # Three.js/React-Three-Fiber helpers
+│   │   ├── rl.utils.ts      # RL-specific utility functions
+│   │   └── useGizmos.tsx    # 3D debugging and visualization helpers
+│   │
+│   └── tooltipTips.ts       # Help text and tutorial content
+│
+└── ablation/                # Ablation study for hyperparameter testing
+    ├── page.tsx             # Ablation study page
+    └── AblationPageClient.tsx # Headless training for parameter optimization
+```
+
+### Core Architecture Components
+
+#### 🧠 Reinforcement Learning Core (`drone/RL/`)
+
+- **`DroneEnv.ts`**: Implements the Markov Decision Process
+  - State space: 9D (3D goal direction + 6 sensor readings)
+  - Action space: 7 discrete actions (6 directions + stay)
+  - Reward function: Goal achievement, obstacle avoidance, efficiency
+  
+- **`DroneTrainer.ts`**: Training orchestration
+  - Episode management and environment resets
+  - Experience collection and batch processing
+  - Algorithm switching (REINFORCE, A2C, PPO)
+  - Real-time metrics tracking
+
+- **`RLPolicyTF.ts`** & **`ValuePolicyTF.ts`**: Neural networks
+  - TensorFlow.js implementation for browser training
+  - Policy network: State → Action probabilities
+  - Value network: State → Expected return estimation
+  - GPU-accelerated via WebGL backend
+
+#### 🎮 Interactive Interface (`drone/Components/`)
+
+- **`DronePage.tsx`**: Main 3D training environment
+  - Three.js scene setup with camera controls
+  - Real-time drone and sensor visualization
+  - Integration of training loop with 3D rendering
+
+- **`DroneTrainerControlPanel.tsx`**: Training controls
+  - Start/stop training controls
+  - Real-time metric displays
+  - Algorithm and hyperparameter selection
+
+- **`IntroModal.tsx`**: Interactive tutorial
+  - 4-slide introduction with videos
+  - Explains RL concepts and interface usage
+
+#### 🎨 3D Visualization (`drone/Display3D/`)
+
+- **`DroneDisplay.tsx`**: Drone and sensor rendering
+  - 3D drone model with directional sensors
+  - Real-time sensor value visualization (color-coded)
+  - Dynamic sensor line rendering to show obstacle detection
+
+- **`EnvironmentDisplay.tsx`**: World rendering
+  - Procedural obstacle generation
+  - Goal position visualization
+  - Environment boundaries and collision detection
+
+#### 🔬 Advanced Analysis (`ablation/`)
+
+- **`AblationPageClient.tsx`**: Automated hyperparameter testing
+  - Headless training for systematic parameter evaluation
+  - Statistical analysis of training performance
+  - Export functionality for research data
+
+### Data Flow Architecture
+
+```
+User Input → DroneTrainerControlPanel → DroneTrainer → DroneEnv
+    ↓                                        ↓           ↓
+Settings/Config                         RL Algorithms   State/Reward
+    ↓                                        ↓           ↓
+Neural Networks ← Experience Buffer ← Action Selection ← Sensors
+    ↓                     ↓                             ↓
+Model Updates        Batch Training                 3D Visualization
+    ↓                     ↓                             ↓
+Performance Charts ← Metrics Collection ← Real-time Rendering
+```
+
+### Key Integration Points
+
+1. **TensorFlow.js Integration**: All neural network operations use TensorFlow.js for browser-native training
+2. **Three.js Integration**: React-Three-Fiber provides declarative 3D scene management
+3. **Real-time Updates**: Training loop synchronizes with 3D rendering loop for live visualization
+4. **State Management**: React hooks manage training state, UI state, and 3D scene state
+5. **Performance Optimization**: WebGL backend for GPU acceleration, requestAnimationFrame for smooth rendering
+
 ## 🤝 Contributing
 
 This project is perfect for:
@@ -190,6 +321,13 @@ This project is perfect for:
 - **Students**: Learning RL concepts through visualization
 - **Developers**: Adding new features or environments
 - **Educators**: Teaching autonomous systems concepts
+
+### Development Guidelines
+
+- **Adding New Algorithms**: Extend `DroneTrainer.ts` and implement in `RL/` directory
+- **UI Components**: Follow React/TypeScript patterns in `Components/` directory  
+- **3D Features**: Use React-Three-Fiber patterns in `Display3D/` directory
+- **Performance**: Leverage WebGL for computationally intensive operations
 
 ## 📝 License
 
