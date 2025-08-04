@@ -365,5 +365,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [React Three Fiber](https://docs.pmnd.rs/react-three-fiber)
 
 ---
-
-**Ready to watch AI learn to fly?** Start the development server and begin training your drone! 🚁✨
