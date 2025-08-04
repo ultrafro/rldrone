@@ -6,16 +6,7 @@ A browser-based demonstration of reinforcement learning algorithms training a vi
 
 demo: https://rldrone.vercel.app/
 
-
-
-
 https://github.com/user-attachments/assets/d03b61af-d064-4add-903f-1ec8f4c7bd77
-
-
-
-
-
-
 
 ## 🎯 Overview
 
@@ -28,9 +19,53 @@ This project showcases major reinforcement learning algorithms applied to autono
 
 https://github.com/user-attachments/assets/0b4071f2-a8f2-4c98-a9e8-b17c34163e20
 
-
-
 The entire training pipeline runs in real-time in your browser, making RL concepts accessible and visualizable without requiring specialized hardware or cloud computing.
+
+### 🧠 Actor Network Implementation (TensorFlow.js)
+
+Here's how the neural network policy is implemented using TensorFlow.js:
+
+```typescript
+export class RLPolicyTF {
+  model: tf.Sequential;
+
+  constructor(num_states: number, num_actions: number, network_size: number) {
+    this.model = tf.sequential();
+
+    // Input layer: 9D state (3D goal direction + 6 sensor readings)
+    this.model.add(tf.layers.dense({
+      units: network_size,           // e.g., 256 neurons
+      inputShape: [num_states],      // 9 inputs
+      activation: "relu"
+    }));
+
+    // Hidden layer
+    this.model.add(tf.layers.dense({ 
+      units: network_size / 2,       // e.g., 128 neurons
+      activation: "relu" 
+    }));
+
+    // Output layer: Action probabilities
+    this.model.add(tf.layers.dense({ 
+      units: num_actions,            // 7 discrete actions
+      activation: "softmax"          // Probability distribution
+    }));
+  }
+
+  // Forward pass for action selection
+  forwardForInference(state: number[]): number[] {
+    const stateTensor = tf.tensor2d([state], [1, state.length]);
+    const actionProbs = this.model.predict(stateTensor) as tf.Tensor;
+    const result = actionProbs.dataSync() as number[];
+    
+    // Clean up tensors to prevent memory leaks
+    stateTensor.dispose();
+    actionProbs.dispose();
+    
+    return result; // [0.1, 0.05, 0.3, 0.2, 0.15, 0.1, 0.1] - action probabilities
+  }
+}
+```
 
 https://github.com/user-attachments/assets/48ff35af-97de-4a5e-b325-f24ff4645098
 
@@ -53,7 +88,6 @@ https://github.com/user-attachments/assets/48ff35af-97de-4a5e-b325-f24ff4645098
    - More stable training than vanilla policy gradients
 
 https://github.com/user-attachments/assets/98de4653-e58f-4c72-a779-7c9c2c4fad44
-
 
 ### Neural Network Architecture
 
